@@ -1,0 +1,11 @@
+include: [
+  "build",
+  "web",
+  "web/js",
+  "web/css",
+  "web/fonts",
+  "web/img",
+  "web/scss",
+  "policy.html",
+  "terms.html",
+]
