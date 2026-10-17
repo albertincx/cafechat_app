@@ -413,28 +413,28 @@
     // If chatId is set -> opens that café's live public chat with a "Subscribe" button leading to the admin's Telegram bot/chat.
     // If chatId === null -> opens the main chat (336925909) and sends a message to the admin: "Café Name, lat, lng".
     window.WORLD_CITIES = [
-        { id: 'newyork', name: 'Caffe Reggio • NYC', lat: 40.7302, lng: -74.0006, chatId: '336925909_ny', telegramUrl: 'https://t.me/InstantChatBot?start=sub_newyork' },
-        { id: 'london', name: 'Monmouth Coffee • London', lat: 51.5145, lng: -0.1268, chatId: '336925909_london', telegramUrl: 'https://t.me/InstantChatBot?start=sub_london' },
-        { id: 'tokyo', name: 'Café de l’Ambre • Tokyo', lat: 35.6687, lng: 139.7618, chatId: '336925909_tokyo', telegramUrl: 'https://t.me/InstantChatBot?start=sub_tokyo' },
-        { id: 'paris', name: 'Café de Flore • Paris', lat: 48.8540, lng: 2.3327, chatId: '336925909_paris', telegramUrl: 'https://t.me/InstantChatBot?start=sub_paris' },
-        { id: 'dubai', name: '% Arabica Dubai Mall • Dubai', lat: 25.1972, lng: 55.2796, chatId: '336925909_dubai', telegramUrl: 'https://t.me/InstantChatBot?start=sub_dubai' },
-        { id: 'moscow', name: 'Café Pushkin • Moscow', lat: 55.7639, lng: 37.6046, chatId: '336925909_moscow', telegramUrl: 'https://t.me/InstantChatBot?start=sub_moscow' },
-        { id: 'spb', name: 'Singer Café • St. Petersburg', lat: 59.9356, lng: 30.3259, chatId: '336925909_spb', telegramUrl: 'https://t.me/InstantChatBot?start=sub_spb' },
-        { id: 'istanbul', name: 'Mandabatmaz • Istanbul', lat: 41.0327, lng: 28.9765, chatId: '336925909_istanbul', telegramUrl: 'https://t.me/InstantChatBot?start=sub_istanbul' },
-        { id: 'bangkok', name: 'Factory Coffee • Bangkok', lat: 13.7567, lng: 100.5349, chatId: '336925909_bangkok', telegramUrl: 'https://t.me/InstantChatBot?start=sub_bangkok' },
-        { id: 'almaty', name: 'Nedelka Café • Almaty', lat: 43.2415, lng: 76.9497, chatId: '336925909_almaty', telegramUrl: 'https://t.me/InstantChatBot?start=sub_almaty' },
-        { id: 'berlin', name: 'The Barn Roastery • Berlin', lat: 52.5284, lng: 13.4109, chatId: '336925909_berlin', telegramUrl: 'https://t.me/InstantChatBot?start=sub_berlin' },
-        { id: 'barcelona', name: 'Cafés El Magnífico • Barcelona', lat: 41.3834, lng: 2.1823, chatId: '336925909_barcelona', telegramUrl: 'https://t.me/InstantChatBot?start=sub_barcelona' },
-        { id: 'rome', name: 'Antico Caffè Greco • Rome', lat: 41.9059, lng: 12.4813, chatId: '336925909_rome', telegramUrl: 'https://t.me/InstantChatBot?start=sub_rome' },
-        { id: 'singapore', name: 'Chye Seng Huat • Singapore', lat: 1.3117, lng: 103.8603, chatId: '336925909_singapore', telegramUrl: 'https://t.me/InstantChatBot?start=sub_singapore' },
-        { id: 'seoul', name: 'Fritz Coffee • Seoul', lat: 37.5419, lng: 126.9491, chatId: '336925909_seoul', telegramUrl: 'https://t.me/InstantChatBot?start=sub_seoul' },
-        { id: 'losangeles', name: 'Verve Coffee • Los Angeles', lat: 34.0403, lng: -118.2345, chatId: '336925909_losangeles', telegramUrl: 'https://t.me/InstantChatBot?start=sub_losangeles' },
-        { id: 'toronto', name: 'Pilot Coffee • Toronto', lat: 43.6512, lng: -79.3602, chatId: '336925909_toronto', telegramUrl: 'https://t.me/InstantChatBot?start=sub_toronto' },
-        { id: 'sydney', name: 'Single O • Sydney', lat: -33.8813, lng: 151.2098, chatId: '336925909_sydney', telegramUrl: 'https://t.me/InstantChatBot?start=sub_sydney' },
-        { id: 'tashkent', name: 'Bon! Café • Tashkent', lat: 41.3111, lng: 69.2797, chatId: '336925909_tashkent', telegramUrl: 'https://t.me/InstantChatBot?start=sub_tashkent' },
-        { id: 'minsk', name: 'Zerno Café • Minsk', lat: 53.9114, lng: 27.5813, chatId: '336925909_minsk', telegramUrl: 'https://t.me/InstantChatBot?start=sub_minsk' },
-        { id: 'bali', name: 'Revolver Espresso • Bali', lat: -8.6853, lng: 115.1585, chatId: '336925909_bali', telegramUrl: 'https://t.me/InstantChatBot?start=sub_bali' },
-        { id: 'saopaulo', name: 'Coffee Lab • São Paulo', lat: -23.5567, lng: -46.6897, chatId: '336925909_saopaulo', telegramUrl: 'https://t.me/InstantChatBot?start=sub_saopaulo' }
+        { id: 'newyork', name: 'Caffe Reggio • NYC', lat: 40.7302, lng: -74.0006, chatId: '336925909_ny', telegramUrl: 'https://t.me/InstantChatBot?start=sub_newyork', googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Caffe+Reggio+119+MacDougal+St+New+York' },
+        { id: 'london', name: 'Monmouth Coffee • London', lat: 51.5145, lng: -0.1268, chatId: '336925909_london', telegramUrl: 'https://t.me/InstantChatBot?start=sub_london', googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Monmouth+Coffee+27+Monmouth+St+London' },
+        { id: 'tokyo', name: 'Café de l’Ambre • Tokyo', lat: 35.6687, lng: 139.7618, chatId: '336925909_tokyo', telegramUrl: 'https://t.me/InstantChatBot?start=sub_tokyo', googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Cafe+de+l%27Ambre+Ginza+Tokyo' },
+        { id: 'paris', name: 'Café de Flore • Paris', lat: 48.8540, lng: 2.3327, chatId: '336925909_paris', telegramUrl: 'https://t.me/InstantChatBot?start=sub_paris', googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Cafe+de+Flore+172+Boulevard+Saint-Germain+Paris' },
+        { id: 'dubai', name: '% Arabica Dubai Mall • Dubai', lat: 25.1972, lng: 55.2796, chatId: '336925909_dubai', telegramUrl: 'https://t.me/InstantChatBot?start=sub_dubai', googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=%25+Arabica+Dubai+Mall+Dubai' },
+        { id: 'moscow', name: 'Café Pushkin • Moscow', lat: 55.7639, lng: 37.6046, chatId: '336925909_moscow', telegramUrl: 'https://t.me/InstantChatBot?start=sub_moscow', googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Cafe+Pushkin+Tverskoy+Boulevard+26A+Moscow' },
+        { id: 'spb', name: 'Singer Café • St. Petersburg', lat: 59.9356, lng: 30.3259, chatId: '336925909_spb', telegramUrl: 'https://t.me/InstantChatBot?start=sub_spb', googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Cafe+Singer+Nevsky+Prospekt+28+Saint+Petersburg' },
+        { id: 'istanbul', name: 'Mandabatmaz • Istanbul', lat: 41.0327, lng: 28.9765, chatId: '336925909_istanbul', telegramUrl: 'https://t.me/InstantChatBot?start=sub_istanbul', googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Mandabatmaz+Beyoglu+Istanbul' },
+        { id: 'bangkok', name: 'Factory Coffee • Bangkok', lat: 13.7567, lng: 100.5349, chatId: '336925909_bangkok', telegramUrl: 'https://t.me/InstantChatBot?start=sub_bangkok', googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Factory+Coffee+Phaya+Thai+Bangkok' },
+        { id: 'almaty', name: 'Nedelka Café • Almaty', lat: 43.2415, lng: 76.9497, chatId: '336925909_almaty', telegramUrl: 'https://t.me/InstantChatBot?start=sub_almaty', googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Nedelka+Cafe+Abay+Ave+19+Almaty' },
+        { id: 'berlin', name: 'The Barn Roastery • Berlin', lat: 52.5284, lng: 13.4109, chatId: '336925909_berlin', telegramUrl: 'https://t.me/InstantChatBot?start=sub_berlin', googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=The+Barn+Coffee+Roasters+Mitte+Berlin' },
+        { id: 'barcelona', name: 'Cafés El Magnífico • Barcelona', lat: 41.3834, lng: 2.1823, chatId: '336925909_barcelona', telegramUrl: 'https://t.me/InstantChatBot?start=sub_barcelona', googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Cafes+El+Magnifico+Barcelona' },
+        { id: 'rome', name: 'Antico Caffè Greco • Rome', lat: 41.9059, lng: 12.4813, chatId: '336925909_rome', telegramUrl: 'https://t.me/InstantChatBot?start=sub_rome', googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Antico+Caffe+Greco+Via+dei+Condotti+86+Rome' },
+        { id: 'singapore', name: 'Chye Seng Huat • Singapore', lat: 1.3117, lng: 103.8603, chatId: '336925909_singapore', telegramUrl: 'https://t.me/InstantChatBot?start=sub_singapore', googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Chye+Seng+Huat+Hardware+150+Tyrwhitt+Rd+Singapore' },
+        { id: 'seoul', name: 'Fritz Coffee • Seoul', lat: 37.5419, lng: 126.9491, chatId: '336925909_seoul', telegramUrl: 'https://t.me/InstantChatBot?start=sub_seoul', googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Fritz+Coffee+Company+Dohwa+Mapo-gu+Seoul' },
+        { id: 'losangeles', name: 'Verve Coffee • Los Angeles', lat: 34.0403, lng: -118.2345, chatId: '336925909_losangeles', telegramUrl: 'https://t.me/InstantChatBot?start=sub_losangeles', googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Verve+Coffee+Roasters+Arts+District+Los+Angeles' },
+        { id: 'toronto', name: 'Pilot Coffee • Toronto', lat: 43.6512, lng: -79.3602, chatId: '336925909_toronto', telegramUrl: 'https://t.me/InstantChatBot?start=sub_toronto', googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Pilot+Coffee+Roasters+Ossington+Toronto' },
+        { id: 'sydney', name: 'Single O • Sydney', lat: -33.8813, lng: 151.2098, chatId: '336925909_sydney', telegramUrl: 'https://t.me/InstantChatBot?start=sub_sydney', googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Single+O+Surry+Hills+60-64+Reservoir+St+Sydney' },
+        { id: 'tashkent', name: 'Bon! Café • Tashkent', lat: 41.3111, lng: 69.2797, chatId: '336925909_tashkent', telegramUrl: 'https://t.me/InstantChatBot?start=sub_tashkent', googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Bon+Cafe+Tashkent' },
+        { id: 'minsk', name: 'Zerno Café • Minsk', lat: 53.9114, lng: 27.5813, chatId: '336925909_minsk', telegramUrl: 'https://t.me/InstantChatBot?start=sub_minsk', googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Zerno+Cafe+Nezavisimosti+46+Minsk' },
+        { id: 'bali', name: 'Revolver Espresso • Bali', lat: -8.6853, lng: 115.1585, chatId: '336925909_bali', telegramUrl: 'https://t.me/InstantChatBot?start=sub_bali', googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Revolver+Espresso+Seminyak+Bali' },
+        { id: 'saopaulo', name: 'Coffee Lab • São Paulo', lat: -23.5567, lng: -46.6897, chatId: '336925909_saopaulo', telegramUrl: 'https://t.me/InstantChatBot?start=sub_saopaulo', googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Coffee+Lab+Vila+Madalena+Sao+Paulo' }
     ];
 
     (function () {
@@ -446,6 +446,16 @@
         let cityMarkers = [];
         let activeCityContext = null;
         let activeCityId = null;
+
+        // Build Google Maps URL for reading reviews or viewing place details
+        window.getGoogleMapsUrl = function (item) {
+            if (!item) return 'https://www.google.com/maps';
+            if (item.googleMapsUrl) return item.googleMapsUrl;
+            const q = item.name
+                ? (item.name + (item.lat != null && item.lng != null ? (' ' + Number(item.lat).toFixed(4) + ',' + Number(item.lng).toFixed(4)) : ''))
+                : (item.coords || '');
+            return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q);
+        };
 
         // Build direct shareable URL for a specific point on the map
         window.getPointDirectUrl = function (city) {
@@ -563,21 +573,26 @@
 
             if (activeCityContext.type === 'city_chat') {
                 const subUrl = activeCityContext.telegramUrl || ('https://t.me/InstantChatBot?start=sub_' + encodeURIComponent(activeCityContext.id || ''));
-                banner.className = 'relative z-30 flex items-center justify-between gap-2 px-3.5 py-2.5 bg-gradient-to-r from-emerald-950/90 via-slate-900/95 to-cyan-950/90 border-b border-emerald-500/40 text-xs';
+                const gMapsUrl = activeCityContext.googleMapsUrl || window.getGoogleMapsUrl(activeCityContext);
+                banner.className = 'relative z-30 flex items-center justify-between gap-2 px-3 py-2 bg-gradient-to-r from-emerald-950/90 via-slate-900/95 to-cyan-950/90 border-b border-emerald-500/40 text-xs';
                 banner.innerHTML =
-                    '<div class="flex items-center gap-2 min-w-0">' +
+                    '<div class="flex items-center gap-1.5 min-w-0">' +
                         '<span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0 shadow-[0_0_8px_#34d399]"></span>' +
-                        '<div class="truncate">' +
-                            '<span class="font-bold text-white">🌍 ' + escapeHtml(activeCityContext.name) + '</span>' +
-                        '</div>' +
+                        '<a href="' + escapeHtml(gMapsUrl) + '" target="_blank" rel="noopener" title="Open on Google Maps & read reviews" class="truncate font-bold text-white hover:text-emerald-300 transition-colors">' +
+                            '☕ ' + escapeHtml(activeCityContext.name) +
+                        '</a>' +
                     '</div>' +
-                    '<div class="flex items-center gap-1.5 shrink-0">' +
+                    '<div class="flex items-center gap-1 shrink-0">' +
+                        '<a href="' + escapeHtml(gMapsUrl) + '" target="_blank" rel="noopener" title="Open on Google Maps & read reviews" ' +
+                           'class="inline-flex items-center gap-1 px-2 py-1.5 rounded-lg font-medium text-[11px] bg-slate-800/90 hover:bg-slate-700 text-amber-300 border border-amber-500/30 transition-all cursor-pointer">' +
+                            '<span>⭐ Reviews</span>' +
+                        '</a>' +
                         '<button type="button" onclick="window.copyActivePointLink(this)" title="Copy direct link to this point chat" ' +
-                                'class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg font-medium text-[11px] bg-slate-800/90 hover:bg-slate-700 text-emerald-300 border border-emerald-500/30 transition-all cursor-pointer">' +
+                                'class="inline-flex items-center gap-1 px-2 py-1.5 rounded-lg font-medium text-[11px] bg-slate-800/90 hover:bg-slate-700 text-emerald-300 border border-emerald-500/30 transition-all cursor-pointer">' +
                             '<span>🔗 Link</span>' +
                         '</button>' +
                         '<a href="' + escapeHtml(subUrl) + '" target="_blank" rel="noopener" ' +
-                           'class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-semibold text-xs bg-[#229ED9] hover:bg-[#1e8ec4] text-white shadow-md shadow-cyan-500/20 transition-all hover:scale-105">' +
+                           'class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg font-semibold text-xs bg-[#229ED9] hover:bg-[#1e8ec4] text-white shadow-md shadow-cyan-500/20 transition-all hover:scale-105">' +
                             '<svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">' +
                                 '<path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>' +
                             '</svg>' +
@@ -591,17 +606,22 @@
                         '</button>' +
                     '</div>';
             } else if (activeCityContext.type === 'admin_request') {
-                banner.className = 'relative z-30 flex items-center justify-between gap-2 px-3.5 py-2 bg-gradient-to-r from-amber-950/80 via-slate-900/95 to-blue-950/80 border-b border-amber-500/40 text-xs';
+                const gMapsUrl = activeCityContext.googleMapsUrl || window.getGoogleMapsUrl(activeCityContext);
+                banner.className = 'relative z-30 flex items-center justify-between gap-2 px-3 py-2 bg-gradient-to-r from-amber-950/80 via-slate-900/95 to-blue-950/80 border-b border-amber-500/40 text-xs';
                 banner.innerHTML =
-                    '<div class="flex items-center gap-2 min-w-0">' +
+                    '<div class="flex items-center gap-1.5 min-w-0">' +
                         '<span class="w-2 h-2 rounded-full bg-amber-400 shrink-0 animate-pulse"></span>' +
                         '<div class="truncate text-amber-200">' +
-                            'Main Chat • Admin Request: <strong>' + escapeHtml(activeCityContext.name) + '</strong>' +
+                            'Main Chat • <strong>' + escapeHtml(activeCityContext.name) + '</strong>' +
                         '</div>' +
                     '</div>' +
-                    '<div class="flex items-center gap-1.5 shrink-0">' +
+                    '<div class="flex items-center gap-1 shrink-0">' +
+                        '<a href="' + escapeHtml(gMapsUrl) + '" target="_blank" rel="noopener" title="Open on Google Maps & read reviews" ' +
+                           'class="inline-flex items-center gap-1 px-2 py-1 rounded-lg font-medium text-[11px] bg-slate-800/90 hover:bg-slate-700 text-amber-300 border border-amber-500/30 transition-all cursor-pointer">' +
+                            '<span>⭐ Maps</span>' +
+                        '</a>' +
                         '<button type="button" onclick="window.copyActivePointLink(this)" title="Copy direct link to this point" ' +
-                                'class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg font-medium text-[11px] bg-slate-800/90 hover:bg-slate-700 text-amber-300 border border-amber-500/30 transition-all cursor-pointer">' +
+                                'class="inline-flex items-center gap-1 px-2 py-1 rounded-lg font-medium text-[11px] bg-slate-800/90 hover:bg-slate-700 text-amber-300 border border-amber-500/30 transition-all cursor-pointer">' +
                             '<span>🔗 Link</span>' +
                         '</button>' +
                         '<button type="button" onclick="window.closeCityChat()" title="Close chat" ' +
@@ -865,8 +885,11 @@
                 type: 'city_chat',
                 id: city.id,
                 name: city.name,
+                lat: city.lat,
+                lng: city.lng,
                 chatId: city.chatId,
-                telegramUrl: city.telegramUrl
+                telegramUrl: city.telegramUrl,
+                googleMapsUrl: window.getGoogleMapsUrl(city)
             };
 
             ensureChatOpen(function () {
@@ -897,7 +920,10 @@
                 type: 'admin_request',
                 id: cityId || '',
                 name: placeName,
-                coords: formattedLat + ', ' + formattedLng
+                lat: lat,
+                lng: lng,
+                coords: formattedLat + ', ' + formattedLng,
+                googleMapsUrl: window.getGoogleMapsUrl({ name: placeName, lat: lat, lng: lng })
             };
 
             ensureChatOpen(function () {
