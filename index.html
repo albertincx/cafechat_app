@@ -578,9 +578,77 @@
             }
         }
 
-        // Observe chat dialog re-renders so the "Subscribe" banner stays attached
+        let wasChatDialogOpen = false;
+        let pendingMainChatRestore = false;
+
+        // Reset from city chat back to the general site chat (336925909)
+        function resetToMainSiteChat() {
+            const hadCityBound = Boolean(activeCityContext || activeCityId || window.__arsfChatIdg !== window.__arsfChatMainIdg);
+            activeCityContext = null;
+            activeCityId = null;
+            window.__arsfChatIdg = window.__arsfChatMainIdg;
+
+            const banner = document.getElementById('cafechat-city-context-banner');
+            if (banner) banner.remove();
+
+            // Clean ?point=... from URL so the site returns to general mode
+            if (window.history && window.history.replaceState && window.location.search) {
+                window.history.replaceState({}, '', window.location.pathname);
+            }
+
+            renderPopularCitiesBar();
+            renderCityMarkers();
+
+            if (hadCityBound) {
+                pendingMainChatRestore = true;
+                try {
+                    sessionStorage.removeItem('webchat_messages');
+                } catch (e) {}
+            }
+        }
+
+        // Observe chat dialog open/close transitions and re-renders
         const chatObserver = new MutationObserver(function () {
-            if (activeCityContext && document.querySelector('#apppopupmax [role="dialog"]') && !document.getElementById('cafechat-city-context-banner')) {
+            const dialog = document.querySelector('#apppopupmax [role="dialog"]');
+            const isNowOpen = Boolean(dialog);
+
+            // Detect when the user closes the chat widget
+            if (wasChatDialogOpen && !isNowOpen) {
+                wasChatDialogOpen = false;
+                resetToMainSiteChat();
+                return;
+            }
+
+            // Detect when the chat widget is opened
+            if (!wasChatDialogOpen && isNowOpen) {
+                wasChatDialogOpen = true;
+                // If opened in general site mode after a city chat was closed, restore main chat history
+                if (!activeCityContext && pendingMainChatRestore) {
+                    pendingMainChatRestore = false;
+                    window.__arsfChatIdg = window.__arsfChatMainIdg;
+                    const props = getChatWidgetDialogProps();
+                    if (props) {
+                        if (typeof props.onClearChat === 'function') {
+                            props.onClearChat();
+                        } else if (typeof props.onSendMessage === 'function') {
+                            props.onSendMessage('/clear');
+                        }
+                    }
+                    if (window.__arsfChat && window.__arsfChat.readyState === WebSocket.OPEN) {
+                        try {
+                            const uid = (props && props.uid) || localStorage.getItem('instantChatBotUidNameStored') || '';
+                            window.__arsfChat.send(JSON.stringify({
+                                service: 'lastmes',
+                                g: window.__arsfChatMainIdg,
+                                uid: uid,
+                                message: 'hi'
+                            }));
+                        } catch (e) {}
+                    }
+                }
+            }
+
+            if (activeCityContext && isNowOpen && !document.getElementById('cafechat-city-context-banner')) {
                 renderChatContextBanner();
             }
         });
@@ -598,6 +666,7 @@
         function switchChatSession(targetChatId) {
             const prevId = window.__arsfChatIdg;
             window.__arsfChatIdg = String(targetChatId);
+            pendingMainChatRestore = false;
             const props = getChatWidgetDialogProps();
             if (props && prevId !== window.__arsfChatIdg) {
                 if (typeof props.onClearChat === 'function') {
