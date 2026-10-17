@@ -12,6 +12,8 @@ if (!rootElement) {
   throw new Error('Failed to find the root element')
 }
 
+window.cafechatAppLoaded = true
+
 const store = configure()
 const root = createRoot(rootElement)
 
