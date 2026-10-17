@@ -91,8 +91,15 @@
             transform: scale(1.18) translateY(-2px);
             z-index: 30 !important;
         }
-        /* Keep floating chat widget above the open World Map */
-        #apppopupmax [role="dialog"],
+        /* Keep floating chat widget above the open World Map and below the top header */
+        #apppopupmax {
+            position: relative;
+            z-index: 90 !important;
+        }
+        #apppopupmax [role="dialog"] {
+            z-index: 90 !important;
+            max-height: calc(100vh - 11.5rem) !important;
+        }
         #apppopupmax .fixed.z-50 {
             z-index: 90 !important;
         }
@@ -112,7 +119,7 @@
 <header class="sticky top-0 z-50 backdrop-blur-md bg-slate-950/75 border-b border-slate-800/60">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-3">
         <!-- Логотип -->
-        <a href="index.html" class="flex items-center gap-3 group shrink-0">
+        <a href="/" class="flex items-center gap-3 group shrink-0">
             <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-400 flex items-center justify-center shadow-lg shadow-blue-500/25 group-hover:scale-105 transition-transform">
                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -385,6 +392,11 @@
     window.__arsfChatMainIdg = '336925909';
     window.__arsfChatIdg = '336925909';
     window.__arsfChatUrl = 'api.cafechat.app/webhook/cafechat';
+    try {
+        if (!localStorage.getItem('instantChatBotUidNameStored')) {
+            localStorage.setItem('instantChatBotUidNameStored', 'user_' + Math.random().toString(36).substring(2, 8));
+        }
+    } catch (e) {}
 
     // Popular cities of the world:
     // If chatId is set -> opens that city's specific chat with a "Subscribe" button leading to the admin's Telegram bot/chat.
@@ -561,6 +573,12 @@
                             '</svg>' +
                             '<span>Subscribe</span>' +
                         '</a>' +
+                        '<button type="button" onclick="window.closeCityChat()" title="Close city chat" ' +
+                                'class="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-slate-800/90 hover:bg-rose-950/70 text-slate-300 hover:text-rose-300 border border-slate-700/80 hover:border-rose-500/40 transition-all cursor-pointer">' +
+                            '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">' +
+                                '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>' +
+                            '</svg>' +
+                        '</button>' +
                     '</div>';
             } else if (activeCityContext.type === 'admin_request') {
                 banner.className = 'relative z-30 flex items-center justify-between gap-2 px-3.5 py-2 bg-gradient-to-r from-amber-950/80 via-slate-900/95 to-blue-950/80 border-b border-amber-500/40 text-xs';
@@ -571,15 +589,34 @@
                             'Main Chat • Admin Request: <strong>' + escapeHtml(activeCityContext.name) + '</strong>' +
                         '</div>' +
                     '</div>' +
-                    '<button type="button" onclick="window.copyActivePointLink(this)" title="Copy direct link to this point" ' +
-                            'class="shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-lg font-medium text-[11px] bg-slate-800/90 hover:bg-slate-700 text-amber-300 border border-amber-500/30 transition-all cursor-pointer">' +
-                        '<span>🔗 Link</span>' +
-                    '</button>';
+                    '<div class="flex items-center gap-1.5 shrink-0">' +
+                        '<button type="button" onclick="window.copyActivePointLink(this)" title="Copy direct link to this point" ' +
+                                'class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg font-medium text-[11px] bg-slate-800/90 hover:bg-slate-700 text-amber-300 border border-amber-500/30 transition-all cursor-pointer">' +
+                            '<span>🔗 Link</span>' +
+                        '</button>' +
+                        '<button type="button" onclick="window.closeCityChat()" title="Close chat" ' +
+                                'class="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-slate-800/90 hover:bg-rose-950/70 text-slate-300 hover:text-rose-300 border border-slate-700/80 hover:border-rose-500/40 transition-all cursor-pointer">' +
+                            '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">' +
+                                '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>' +
+                            '</svg>' +
+                        '</button>' +
+                    '</div>';
             }
         }
 
         let wasChatDialogOpen = false;
         let pendingMainChatRestore = false;
+
+        // Explicitly close the city chat, unbind the city, and switch back to the general site chat
+        window.closeCityChat = function () {
+            const props = getChatWidgetDialogProps();
+            resetToMainSiteChat();
+            if (props && typeof props.onClose === 'function') {
+                props.onClose();
+            } else if (window.instantChatBot && typeof window.instantChatBot.open === 'function' && window.instantChatBot.show) {
+                window.instantChatBot.open();
+            }
+        };
 
         // Reset from city chat back to the general site chat (336925909)
         function resetToMainSiteChat() {
@@ -604,6 +641,46 @@
                 try {
                     sessionStorage.removeItem('webchat_messages');
                 } catch (e) {}
+                requestLastMessagesForGroup(window.__arsfChatMainIdg);
+            }
+        }
+
+        function getActiveChatUid(props) {
+            const p = props || getChatWidgetDialogProps();
+            if (p && p.uid) {
+                try {
+                    localStorage.setItem('instantChatBotUidNameStored', p.uid);
+                } catch (e) {}
+                return p.uid;
+            }
+            try {
+                return localStorage.getItem('instantChatBotUidNameStored') || '';
+            } catch (e) {
+                return '';
+            }
+        }
+
+        function requestLastMessagesForGroup(targetGroupId, props) {
+            const groupId = String(targetGroupId || window.__arsfChatIdg || window.__arsfChatMainIdg);
+            const sendReq = function () {
+                if (!window.__arsfChat || window.__arsfChat.readyState !== WebSocket.OPEN) return;
+                try {
+                    const uid = getActiveChatUid(props);
+                    window.__arsfChat.send(JSON.stringify({
+                        service: 'lastmes',
+                        g: groupId,
+                        uid: uid,
+                        message: 'hi'
+                    }));
+                } catch (e) {}
+            };
+
+            if (window.__arsfChat) {
+                if (window.__arsfChat.readyState === WebSocket.OPEN) {
+                    sendReq();
+                } else if (window.__arsfChat.readyState === WebSocket.CONNECTING) {
+                    window.__arsfChat.addEventListener('open', sendReq, { once: true });
+                }
             }
         }
 
@@ -628,23 +705,13 @@
                     window.__arsfChatIdg = window.__arsfChatMainIdg;
                     const props = getChatWidgetDialogProps();
                     if (props) {
-                        if (typeof props.onClearChat === 'function') {
-                            props.onClearChat();
-                        } else if (typeof props.onSendMessage === 'function') {
+                        if (typeof props.onSendMessage === 'function') {
                             props.onSendMessage('/clear');
+                        } else if (typeof props.onClearChat === 'function') {
+                            props.onClearChat();
                         }
                     }
-                    if (window.__arsfChat && window.__arsfChat.readyState === WebSocket.OPEN) {
-                        try {
-                            const uid = (props && props.uid) || localStorage.getItem('instantChatBotUidNameStored') || '';
-                            window.__arsfChat.send(JSON.stringify({
-                                service: 'lastmes',
-                                g: window.__arsfChatMainIdg,
-                                uid: uid,
-                                message: 'hi'
-                            }));
-                        } catch (e) {}
-                    }
+                    requestLastMessagesForGroup(window.__arsfChatMainIdg, props);
                 }
             }
 
@@ -663,29 +730,20 @@
         }
 
         // Switch chat session to targetChatId and request history over WebSocket
-        function switchChatSession(targetChatId) {
-            const prevId = window.__arsfChatIdg;
-            window.__arsfChatIdg = String(targetChatId);
+        function switchChatSession(targetChatId, forceClear) {
+            const targetStr = String(targetChatId);
+            const changed = forceClear || (window.__arsfChatIdg !== targetStr);
+            window.__arsfChatIdg = targetStr;
             pendingMainChatRestore = false;
             const props = getChatWidgetDialogProps();
-            if (props && prevId !== window.__arsfChatIdg) {
-                if (typeof props.onClearChat === 'function') {
-                    props.onClearChat();
-                } else if (typeof props.onSendMessage === 'function') {
+            if (props && changed) {
+                if (typeof props.onSendMessage === 'function') {
                     props.onSendMessage('/clear');
+                } else if (typeof props.onClearChat === 'function') {
+                    props.onClearChat();
                 }
             }
-            if (window.__arsfChat && window.__arsfChat.readyState === WebSocket.OPEN) {
-                try {
-                    const uid = (props && props.uid) || localStorage.getItem('instantChatBotUidNameStored') || '';
-                    window.__arsfChat.send(JSON.stringify({
-                        service: 'lastmes',
-                        g: window.__arsfChatIdg,
-                        uid: uid,
-                        message: 'hi'
-                    }));
-                } catch (e) {}
-            }
+            requestLastMessagesForGroup(window.__arsfChatIdg, props);
         }
 
         // Automatically write and send a message inside the chat widget (and over WebSocket to admin)
@@ -718,7 +776,7 @@
                         host: window.location.host,
                         pathname: window.location.pathname,
                         g: window.__arsfChatIdg || window.__arsfChatMainIdg,
-                        uid: localStorage.getItem('instantChatBotUidNameStored') || '',
+                        uid: getActiveChatUid(props),
                         img: ''
                     }));
                 } catch (e) {}
@@ -747,6 +805,9 @@
                 return;
             }
 
+            const prevChatId = window.__arsfChatIdg;
+            window.__arsfChatIdg = String(city.chatId);
+
             activeCityContext = {
                 type: 'city_chat',
                 id: city.id,
@@ -756,7 +817,7 @@
             };
 
             ensureChatOpen(function () {
-                switchChatSession(city.chatId);
+                switchChatSession(city.chatId, prevChatId !== String(city.chatId));
                 renderChatContextBanner();
             });
         };
@@ -775,6 +836,9 @@
                 renderCityMarkers();
             }
 
+            const prevChatId = window.__arsfChatIdg;
+            window.__arsfChatIdg = String(window.__arsfChatMainIdg);
+
             activeCityContext = {
                 type: 'admin_request',
                 id: cityId || '',
@@ -783,7 +847,7 @@
             };
 
             ensureChatOpen(function () {
-                switchChatSession(window.__arsfChatMainIdg);
+                switchChatSession(window.__arsfChatMainIdg, prevChatId !== String(window.__arsfChatMainIdg));
                 renderChatContextBanner();
                 if (!skipAutoSend) {
                     setTimeout(function () {
