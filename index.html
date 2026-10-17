@@ -32,6 +32,10 @@
             src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-YXLDVCGJMK"></script>
 
+    <!-- MapLibre GL JS -->
+    <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet" />
+    <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+
     <style>
         @keyframes float {
             0%, 100% {
@@ -52,6 +56,46 @@
             width: 100% !important;
             max-width: 720px !important;
         }
+
+        /* MapLibre Custom Styles */
+        .maplibregl-popup-content {
+            background: rgba(15, 23, 42, 0.96) !important;
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(51, 65, 85, 0.8) !important;
+            border-radius: 1rem !important;
+            color: #f8fafc !important;
+            padding: 14px 16px !important;
+            box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.7) !important;
+            font-family: 'Inter', sans-serif !important;
+        }
+        .maplibregl-popup-tip {
+            border-top-color: rgba(15, 23, 42, 0.96) !important;
+            border-bottom-color: rgba(15, 23, 42, 0.96) !important;
+        }
+        .maplibregl-popup-close-button {
+            color: #94a3b8 !important;
+            font-size: 18px !important;
+            padding: 4px 8px !important;
+            right: 4px !important;
+            top: 4px !important;
+        }
+        .maplibregl-popup-close-button:hover {
+            color: #ffffff !important;
+            background: transparent !important;
+        }
+        .city-marker {
+            cursor: pointer;
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .city-marker:hover {
+            transform: scale(1.18) translateY(-2px);
+            z-index: 30 !important;
+        }
+        /* Keep floating chat widget above the open World Map */
+        #apppopupmax [role="dialog"],
+        #apppopupmax .fixed.z-50 {
+            z-index: 90 !important;
+        }
     </style>
 </head>
 
@@ -66,9 +110,9 @@
 
 <!-- Шапка (Header) -->
 <header class="sticky top-0 z-50 backdrop-blur-md bg-slate-950/75 border-b border-slate-800/60">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-3">
         <!-- Логотип -->
-        <a href="index.html" class="flex items-center gap-3 group">
+        <a href="index.html" class="flex items-center gap-3 group shrink-0">
             <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-400 flex items-center justify-center shadow-lg shadow-blue-500/25 group-hover:scale-105 transition-transform">
                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -79,14 +123,28 @@
                     class="text-blue-400">Chat</span></span>
         </a>
 
-        <!-- Кнопка CTA -->
-        <a href="https://t.me/InstantChatBot" target="_blank" rel="noopener"
-           class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold bg-white/10 hover:bg-white/15 text-white border border-white/10 transition-all hover:scale-105 active:scale-95">
-            <svg class="w-4 h-4 text-cyan-400" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
-            </svg>
-            <span>Get it free!</span>
-        </a>
+        <!-- Header Actions -->
+        <div class="flex items-center gap-2.5 sm:gap-3">
+            <!-- Open World Button -->
+            <button id="open-world-btn" type="button"
+                    onclick="window.openWorldMapModal()"
+                    class="inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-full text-sm font-semibold bg-gradient-to-r from-emerald-500/20 to-cyan-500/20 hover:from-emerald-500/30 hover:to-cyan-500/30 text-emerald-300 border border-emerald-500/40 shadow-lg shadow-emerald-500/10 transition-all hover:scale-105 active:scale-95 cursor-pointer">
+                <svg class="w-4 h-4 text-emerald-400 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span>Open World</span>
+            </button>
+
+            <!-- Кнопка CTA -->
+            <a href="https://t.me/InstantChatBot" target="_blank" rel="noopener"
+               class="inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-full text-sm font-semibold bg-white/10 hover:bg-white/15 text-white border border-white/10 transition-all hover:scale-105 active:scale-95">
+                <svg class="w-4 h-4 text-cyan-400 shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                </svg>
+                <span class="hidden sm:inline">Get it free!</span>
+            </a>
+        </div>
     </div>
 </header>
 
@@ -213,10 +271,758 @@
     </div>
 </footer>
 
-<!-- Скрипты интеграций -->
+<!-- World Map View with MapLibre GL JS (Google Maps) -->
+<div id="world-map-modal" class="fixed top-20 inset-x-0 bottom-0 z-40 hidden flex-col bg-slate-950">
+    <div class="relative w-full h-full bg-slate-900 flex flex-col overflow-hidden">
+
+        <!-- Map Toolbar Header -->
+        <div class="flex flex-wrap items-center justify-between gap-3 px-4 sm:px-6 py-3 bg-slate-950/95 border-b border-slate-800/80 z-20">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-cyan-400 flex items-center justify-center shadow-md shadow-emerald-500/20">
+                    <svg class="w-5 h-5 text-slate-950" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h2 class="text-base sm:text-lg font-bold text-white leading-tight">World Chat Map</h2>
+                    <p class="text-xs text-slate-400 hidden sm:block">Select a city to open its chat or create a new point</p>
+                </div>
+            </div>
+
+            <!-- Map Controls -->
+            <div class="flex items-center gap-2 sm:gap-3">
+                <!-- Google Map Layer Switcher -->
+                <button id="toggle-map-layer-btn" type="button" onclick="window.toggleGoogleMapLayer()"
+                        class="px-3 py-2 rounded-xl text-xs font-medium bg-slate-800/90 hover:bg-slate-800 text-slate-200 border border-slate-700/80 transition-colors cursor-pointer">
+                    🗺️ Satellite / Map
+                </button>
+
+                <!-- Create Point Button -->
+                <button id="create-point-toggle-btn" type="button" onclick="window.toggleCreatePointMode()"
+                        class="inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white shadow-lg shadow-blue-500/20 transition-all cursor-pointer">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    <span>Create Point</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Popular Cities Quick Bar & Legend -->
+        <div class="flex items-center justify-between gap-3 px-4 sm:px-6 py-2.5 bg-slate-900/95 border-b border-slate-800/80 overflow-x-auto no-scrollbar z-20">
+            <div class="flex items-center gap-3 text-xs shrink-0 pr-2 border-r border-slate-800">
+                <span class="inline-flex items-center gap-1.5 text-emerald-400 font-medium">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]"></span>
+                    Chat Active
+                </span>
+                <span class="inline-flex items-center gap-1.5 text-amber-400 font-medium">
+                    <span class="w-2.5 h-2.5 rounded-full bg-amber-400 shadow-[0_0_8px_#fbbf24]"></span>
+                    Request Chat
+                </span>
+            </div>
+            <div id="popular-cities-bar" class="flex items-center gap-1.5 overflow-x-auto py-0.5"></div>
+        </div>
+
+        <!-- Map Container & Create Point Floating Panel -->
+        <div class="relative flex-1 w-full h-full">
+            <div id="world-map-container" class="w-full h-full"></div>
+
+            <!-- Create New Point Panel (select place on map + enter name + Send button) -->
+            <div id="create-point-panel"
+                 class="hidden absolute top-4 left-4 right-4 sm:left-auto sm:right-4 sm:w-96 z-30 bg-slate-950/95 backdrop-blur-xl border border-blue-500/40 rounded-2xl p-4 shadow-2xl">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping"></span>
+                        <h3 class="text-sm font-bold text-white">Create New Point</h3>
+                    </div>
+                    <button type="button" onclick="window.toggleCreatePointMode(false)"
+                            class="text-slate-400 hover:text-white text-xs px-2 py-0.5 rounded bg-slate-800 cursor-pointer">
+                        Cancel
+                    </button>
+                </div>
+
+                <p class="text-xs text-slate-300 mb-3 leading-relaxed">
+                    1. Click anywhere on the map to pick a location.<br>
+                    2. Enter the city or place name and click <strong>"Send"</strong> to message the admin.
+                </p>
+
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-[11px] font-medium text-slate-400 mb-1">Map Coordinates</label>
+                        <div id="selected-point-coords-display"
+                             class="px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs font-mono text-cyan-300">
+                            Click on the map to select a point...
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="custom-point-name-input" class="block text-[11px] font-medium text-slate-400 mb-1">Point / City Name</label>
+                        <input id="custom-point-name-input" type="text"
+                               placeholder="e.g. Barcelona, Downtown..."
+                               class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 focus:border-cyan-400 focus:outline-none text-sm text-white placeholder-slate-500" />
+                    </div>
+
+                    <p id="create-point-error" class="hidden text-xs text-rose-400 font-medium"></p>
+
+                    <button type="button" onclick="window.submitCustomPointToAdmin()"
+                            class="w-full py-2.5 px-4 rounded-xl text-sm font-semibold bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 shadow-lg shadow-emerald-500/20 transition-all cursor-pointer flex items-center justify-center gap-2">
+                        <span>Send</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Integration Scripts -->
 <script>
+    window.__arsfChatMainIdg = '336925909';
     window.__arsfChatIdg = '336925909';
     window.__arsfChatUrl = 'api.cafechat.app/webhook/cafechat';
+
+    // Popular cities of the world:
+    // If chatId is set -> opens that city's specific chat with a "Subscribe" button leading to the admin's Telegram bot/chat.
+    // If chatId === null -> opens the main chat (336925909) and sends a message to the admin: "City Name, lat, lng".
+    window.WORLD_CITIES = [
+        { id: 'newyork', name: 'New York', lat: 40.7128, lng: -74.0060, chatId: '336925909_ny', telegramUrl: 'https://t.me/InstantChatBot?start=sub_newyork' },
+        { id: 'london', name: 'London', lat: 51.5074, lng: -0.1278, chatId: '336925909_london', telegramUrl: 'https://t.me/InstantChatBot?start=sub_london' },
+        { id: 'tokyo', name: 'Tokyo', lat: 35.6762, lng: 139.6503, chatId: '336925909_tokyo', telegramUrl: 'https://t.me/InstantChatBot?start=sub_tokyo' },
+        { id: 'paris', name: 'Paris', lat: 48.8566, lng: 2.3522, chatId: '336925909_paris', telegramUrl: 'https://t.me/InstantChatBot?start=sub_paris' },
+        { id: 'dubai', name: 'Dubai', lat: 25.2048, lng: 55.2708, chatId: '336925909_dubai', telegramUrl: 'https://t.me/InstantChatBot?start=sub_dubai' },
+        { id: 'moscow', name: 'Moscow', lat: 55.7558, lng: 37.6173, chatId: '336925909_moscow', telegramUrl: 'https://t.me/InstantChatBot?start=sub_moscow' },
+        { id: 'spb', name: 'Saint Petersburg', lat: 59.9343, lng: 30.3351, chatId: '336925909_spb', telegramUrl: 'https://t.me/InstantChatBot?start=sub_spb' },
+        { id: 'istanbul', name: 'Istanbul', lat: 41.0082, lng: 28.9784, chatId: '336925909_istanbul', telegramUrl: 'https://t.me/InstantChatBot?start=sub_istanbul' },
+        { id: 'bangkok', name: 'Bangkok', lat: 13.7563, lng: 100.5018, chatId: '336925909_bangkok', telegramUrl: 'https://t.me/InstantChatBot?start=sub_bangkok' },
+        { id: 'almaty', name: 'Almaty', lat: 43.2220, lng: 76.8512, chatId: '336925909_almaty', telegramUrl: 'https://t.me/InstantChatBot?start=sub_almaty' },
+        // Popular cities without an active chat yet (clicking opens main chat and sends request to admin)
+        // { id: 'berlin', name: 'Berlin', lat: 52.5200, lng: 13.4050, chatId: null, telegramUrl: null },
+        // { id: 'barcelona', name: 'Barcelona', lat: 41.3874, lng: 2.1686, chatId: null, telegramUrl: null },
+        // { id: 'rome', name: 'Rome', lat: 41.9028, lng: 12.4964, chatId: null, telegramUrl: null },
+        // { id: 'singapore', name: 'Singapore', lat: 1.3521, lng: 103.8198, chatId: null, telegramUrl: null },
+        // { id: 'seoul', name: 'Seoul', lat: 37.5665, lng: 126.9780, chatId: null, telegramUrl: null },
+        // { id: 'losangeles', name: 'Los Angeles', lat: 34.0522, lng: -118.2437, chatId: null, telegramUrl: null },
+        // { id: 'toronto', name: 'Toronto', lat: 43.6532, lng: -79.3832, chatId: null, telegramUrl: null },
+        // { id: 'sydney', name: 'Sydney', lat: -33.8688, lng: 151.2093, chatId: null, telegramUrl: null },
+        // { id: 'tashkent', name: 'Tashkent', lat: 41.2995, lng: 69.2401, chatId: null, telegramUrl: null },
+        // { id: 'minsk', name: 'Minsk', lat: 53.9006, lng: 27.5590, chatId: null, telegramUrl: null },
+        // { id: 'bali', name: 'Bali (Denpasar)', lat: -8.6705, lng: 115.2126, chatId: null, telegramUrl: null },
+        // { id: 'saopaulo', name: 'São Paulo', lat: -23.5505, lng: -46.6333, chatId: null, telegramUrl: null }
+    ];
+
+    (function () {
+        let mapInstance = null;
+        let isHybridLayer = false;
+        let createPointMode = false;
+        let selectedCustomCoords = null;
+        let customTempMarker = null;
+        let cityMarkers = [];
+        let activeCityContext = null;
+        let activeCityId = null;
+
+        // Build direct shareable URL for a specific point on the map
+        window.getPointDirectUrl = function (city) {
+            if (!city) return window.location.origin + window.location.pathname;
+            const url = new URL(window.location.origin + window.location.pathname);
+            url.searchParams.set('point', city.id);
+            // If it's a dynamically created point, include coordinates & name in the URL so anyone opening the link sees it
+            const isPredefined = ['newyork','london','tokyo','paris','dubai','moscow','spb','istanbul','bangkok','almaty','berlin','barcelona','rome','singapore','seoul','losangeles','toronto','sydney','tashkent','minsk','bali','saopaulo'].indexOf(city.id) !== -1;
+            if (!isPredefined) {
+                url.searchParams.set('name', city.name);
+                url.searchParams.set('lat', Number(city.lat).toFixed(4));
+                url.searchParams.set('lng', Number(city.lng).toFixed(4));
+                if (city.chatId) url.searchParams.set('chat', city.chatId);
+            }
+            return url.toString();
+        };
+
+        window.copyActivePointLink = function (btnEl) {
+            const city = window.WORLD_CITIES.find(function (c) { return c.id === activeCityId; });
+            const shareUrl = city ? window.getPointDirectUrl(city) : window.location.href;
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(shareUrl);
+            }
+            if (btnEl) {
+                const origHtml = btnEl.innerHTML;
+                btnEl.innerHTML = '<span>✓ Copied!</span>';
+                setTimeout(function () {
+                    btnEl.innerHTML = origHtml;
+                }, 1600);
+            }
+        };
+
+        // Show a sleek floating vibe banner when flying into a point
+        function showFlightToast(cityName) {
+            let toast = document.getElementById('world-map-flight-toast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'world-map-flight-toast';
+                toast.className = 'fixed top-36 left-1/2 -translate-x-1/2 z-[80] pointer-events-none transition-all duration-500 opacity-0 translate-y-2';
+                document.body.appendChild(toast);
+            }
+            toast.innerHTML =
+                '<div class="flex items-center gap-2.5 px-4 py-2 rounded-full bg-slate-950/90 border border-emerald-500/50 text-emerald-300 text-xs font-semibold shadow-[0_0_30px_rgba(16,185,129,0.35)] backdrop-blur-xl">' +
+                    '<span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>' +
+                    '<span>Entering <strong>' + escapeHtml(cityName) + '</strong> live point...</span>' +
+                '</div>';
+            requestAnimationFrame(function () {
+                toast.classList.remove('opacity-0', 'translate-y-2');
+                toast.classList.add('opacity-100', 'translate-y-0');
+            });
+            setTimeout(function () {
+                toast.classList.remove('opacity-100', 'translate-y-0');
+                toast.classList.add('opacity-0', 'translate-y-2');
+            }, 2400);
+        }
+
+        // Locate React chat dialog props for direct message sending and history management
+        function getChatWidgetDialogProps() {
+            const dialog = document.querySelector('#apppopupmax [role="dialog"]');
+            if (!dialog) return null;
+            const fiberKey = Object.keys(dialog).find(function (k) {
+                return k.indexOf('__reactFiber$') === 0;
+            });
+            if (!fiberKey) return null;
+            let fiber = dialog[fiberKey];
+            while (fiber) {
+                if (fiber.memoizedProps && typeof fiber.memoizedProps.onSendMessage === 'function') {
+                    return fiber.memoizedProps;
+                }
+                fiber = fiber.return;
+            }
+            return null;
+        }
+
+        // Ensure the floating chat widget is open
+        function ensureChatOpen(callback) {
+            let attempts = 0;
+            function tryOpen() {
+                attempts++;
+                if (window.instantChatBot && typeof window.instantChatBot.open === 'function') {
+                    if (!window.instantChatBot.show) {
+                        window.instantChatBot.open();
+                    }
+                    setTimeout(function () {
+                        if (callback) callback();
+                    }, 180);
+                } else if (attempts < 30) {
+                    setTimeout(tryOpen, 150);
+                }
+            }
+            tryOpen();
+        }
+
+        // Render the city header banner, Share Link button, and Telegram "Subscribe" button inside the open chat widget
+        function renderChatContextBanner() {
+            const dialog = document.querySelector('#apppopupmax [role="dialog"]');
+            if (!dialog) return;
+
+            let banner = document.getElementById('cafechat-city-context-banner');
+            if (!activeCityContext) {
+                if (banner) banner.remove();
+                return;
+            }
+
+            if (!banner) {
+                banner = document.createElement('div');
+                banner.id = 'cafechat-city-context-banner';
+                const headerWrapper = dialog.firstElementChild;
+                if (headerWrapper && headerWrapper.nextSibling) {
+                    dialog.insertBefore(banner, headerWrapper.nextSibling);
+                } else {
+                    dialog.prepend(banner);
+                }
+            }
+
+            if (activeCityContext.type === 'city_chat') {
+                const subUrl = activeCityContext.telegramUrl || ('https://t.me/InstantChatBot?start=sub_' + encodeURIComponent(activeCityContext.id || ''));
+                banner.className = 'relative z-30 flex items-center justify-between gap-2 px-3.5 py-2.5 bg-gradient-to-r from-emerald-950/90 via-slate-900/95 to-cyan-950/90 border-b border-emerald-500/40 text-xs';
+                banner.innerHTML =
+                    '<div class="flex items-center gap-2 min-w-0">' +
+                        '<span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0 shadow-[0_0_8px_#34d399]"></span>' +
+                        '<div class="truncate">' +
+                            '<span class="font-bold text-white">🌍 ' + escapeHtml(activeCityContext.name) + '</span>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="flex items-center gap-1.5 shrink-0">' +
+                        '<button type="button" onclick="window.copyActivePointLink(this)" title="Copy direct link to this point chat" ' +
+                                'class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg font-medium text-[11px] bg-slate-800/90 hover:bg-slate-700 text-emerald-300 border border-emerald-500/30 transition-all cursor-pointer">' +
+                            '<span>🔗 Link</span>' +
+                        '</button>' +
+                        '<a href="' + escapeHtml(subUrl) + '" target="_blank" rel="noopener" ' +
+                           'class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-semibold text-xs bg-[#229ED9] hover:bg-[#1e8ec4] text-white shadow-md shadow-cyan-500/20 transition-all hover:scale-105">' +
+                            '<svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">' +
+                                '<path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>' +
+                            '</svg>' +
+                            '<span>Subscribe</span>' +
+                        '</a>' +
+                    '</div>';
+            } else if (activeCityContext.type === 'admin_request') {
+                banner.className = 'relative z-30 flex items-center justify-between gap-2 px-3.5 py-2 bg-gradient-to-r from-amber-950/80 via-slate-900/95 to-blue-950/80 border-b border-amber-500/40 text-xs';
+                banner.innerHTML =
+                    '<div class="flex items-center gap-2 min-w-0">' +
+                        '<span class="w-2 h-2 rounded-full bg-amber-400 shrink-0 animate-pulse"></span>' +
+                        '<div class="truncate text-amber-200">' +
+                            'Main Chat • Admin Request: <strong>' + escapeHtml(activeCityContext.name) + '</strong>' +
+                        '</div>' +
+                    '</div>' +
+                    '<button type="button" onclick="window.copyActivePointLink(this)" title="Copy direct link to this point" ' +
+                            'class="shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-lg font-medium text-[11px] bg-slate-800/90 hover:bg-slate-700 text-amber-300 border border-amber-500/30 transition-all cursor-pointer">' +
+                        '<span>🔗 Link</span>' +
+                    '</button>';
+            }
+        }
+
+        // Observe chat dialog re-renders so the "Subscribe" banner stays attached
+        const chatObserver = new MutationObserver(function () {
+            if (activeCityContext && document.querySelector('#apppopupmax [role="dialog"]') && !document.getElementById('cafechat-city-context-banner')) {
+                renderChatContextBanner();
+            }
+        });
+        chatObserver.observe(document.body, { childList: true, subtree: true });
+
+        function escapeHtml(str) {
+            return String(str || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        // Switch chat session to targetChatId and request history over WebSocket
+        function switchChatSession(targetChatId) {
+            const prevId = window.__arsfChatIdg;
+            window.__arsfChatIdg = String(targetChatId);
+            const props = getChatWidgetDialogProps();
+            if (props && prevId !== window.__arsfChatIdg) {
+                if (typeof props.onClearChat === 'function') {
+                    props.onClearChat();
+                } else if (typeof props.onSendMessage === 'function') {
+                    props.onSendMessage('/clear');
+                }
+            }
+            if (window.__arsfChat && window.__arsfChat.readyState === WebSocket.OPEN) {
+                try {
+                    const uid = (props && props.uid) || localStorage.getItem('instantChatBotUidNameStored') || '';
+                    window.__arsfChat.send(JSON.stringify({
+                        service: 'lastmes',
+                        g: window.__arsfChatIdg,
+                        uid: uid,
+                        message: 'hi'
+                    }));
+                } catch (e) {}
+            }
+        }
+
+        // Automatically write and send a message inside the chat widget (and over WebSocket to admin)
+        function sendMessageInWidget(text) {
+            const props = getChatWidgetDialogProps();
+            if (props && typeof props.onSendMessage === 'function') {
+                props.onSendMessage(text);
+                return;
+            }
+            // Fallback via DOM chat form if React Fiber is unavailable
+            const dialog = document.querySelector('#apppopupmax [role="dialog"]');
+            if (dialog) {
+                const textarea = dialog.querySelector('textarea');
+                const submitBtn = dialog.querySelector('button[type="submit"]');
+                if (textarea) {
+                    const nativeSetter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, 'value').set;
+                    nativeSetter.call(textarea, text);
+                    textarea.dispatchEvent(new Event('input', { bubbles: true }));
+                    setTimeout(function () {
+                        if (submitBtn) submitBtn.click();
+                    }, 60);
+                    return;
+                }
+            }
+            // Direct WebSocket send fallback
+            if (window.__arsfChat && window.__arsfChat.readyState === WebSocket.OPEN) {
+                try {
+                    window.__arsfChat.send(JSON.stringify({
+                        message: text,
+                        host: window.location.host,
+                        pathname: window.location.pathname,
+                        g: window.__arsfChatIdg || window.__arsfChatMainIdg,
+                        uid: localStorage.getItem('instantChatBotUidNameStored') || '',
+                        img: ''
+                    }));
+                } catch (e) {}
+            }
+        }
+
+        function updateBrowserUrlForPoint(city) {
+            if (!city || !window.history || !window.history.replaceState) return;
+            const newUrl = window.getPointDirectUrl(city);
+            window.history.replaceState({ pointId: city.id }, '', newUrl);
+        }
+
+        // FLOW 1: City chat exists -> open city-specific chat with Telegram "Subscribe" button (map stays open)
+        window.openCityChatFlow = function (cityId, options) {
+            const opts = options || {};
+            const city = window.WORLD_CITIES.find(function (c) { return c.id === cityId; });
+            if (!city) return;
+
+            activeCityId = city.id;
+            updateBrowserUrlForPoint(city);
+            renderPopularCitiesBar();
+            renderCityMarkers();
+
+            if (!city.chatId) {
+                window.sendCityRequestToAdminFlow(city.name, city.lat, city.lng, city.id, opts.skipAutoSend);
+                return;
+            }
+
+            activeCityContext = {
+                type: 'city_chat',
+                id: city.id,
+                name: city.name,
+                chatId: city.chatId,
+                telegramUrl: city.telegramUrl
+            };
+
+            ensureChatOpen(function () {
+                switchChatSession(city.chatId);
+                renderChatContextBanner();
+            });
+        };
+
+        // FLOW 2: City chat does not exist (or custom point created) -> open main chat and send "city name, coordinates" to admin (map stays open)
+        window.sendCityRequestToAdminFlow = function (placeName, lat, lng, cityId, skipAutoSend) {
+            const formattedLat = Number(lat).toFixed(4);
+            const formattedLng = Number(lng).toFixed(4);
+            const adminMessage = placeName + ', ' + formattedLat + ', ' + formattedLng;
+
+            if (cityId) {
+                activeCityId = cityId;
+                const city = window.WORLD_CITIES.find(function (c) { return c.id === cityId; });
+                if (city) updateBrowserUrlForPoint(city);
+                renderPopularCitiesBar();
+                renderCityMarkers();
+            }
+
+            activeCityContext = {
+                type: 'admin_request',
+                id: cityId || '',
+                name: placeName,
+                coords: formattedLat + ', ' + formattedLng
+            };
+
+            ensureChatOpen(function () {
+                switchChatSession(window.__arsfChatMainIdg);
+                renderChatContextBanner();
+                if (!skipAutoSend) {
+                    setTimeout(function () {
+                        sendMessageInWidget(adminMessage);
+                    }, 120);
+                }
+            });
+        };
+
+        // Google Maps style configuration for MapLibre GL JS (in English)
+        function getGoogleMapStyle(hybrid) {
+            const lyrs = hybrid ? 'y' : 'm';
+            return {
+                version: 8,
+                sources: {
+                    'google-tiles': {
+                        type: 'raster',
+                        tiles: [
+                            'https://mt0.google.com/vt/lyrs=' + lyrs + '&hl=en&x={x}&y={y}&z={z}',
+                            'https://mt1.google.com/vt/lyrs=' + lyrs + '&hl=en&x={x}&y={y}&z={z}',
+                            'https://mt2.google.com/vt/lyrs=' + lyrs + '&hl=en&x={x}&y={y}&z={z}',
+                            'https://mt3.google.com/vt/lyrs=' + lyrs + '&hl=en&x={x}&y={y}&z={z}'
+                        ],
+                        tileSize: 256,
+                        attribution: 'Map data &copy; Google'
+                    }
+                },
+                layers: [
+                    {
+                        id: 'google-layer',
+                        type: 'raster',
+                        source: 'google-tiles',
+                        minzoom: 0,
+                        maxzoom: 20
+                    }
+                ]
+            };
+        }
+
+        function renderPopularCitiesBar() {
+            const bar = document.getElementById('popular-cities-bar');
+            if (!bar) return;
+            bar.innerHTML = window.WORLD_CITIES.map(function (city) {
+                const hasChat = Boolean(city.chatId);
+                const isSelected = city.id === activeCityId;
+                const badgeClass = isSelected
+                    ? 'bg-emerald-500/30 text-white border-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.4)] scale-105'
+                    : hasChat
+                        ? 'bg-emerald-950/70 hover:bg-emerald-900/80 text-emerald-300 border-emerald-500/40'
+                        : 'bg-slate-800/80 hover:bg-slate-800 text-slate-300 border-slate-700';
+                const dotClass = hasChat ? 'bg-emerald-400' : 'bg-amber-400';
+                return (
+                    '<button type="button" onclick="window.focusAndSelectCity(\'' + city.id + '\')" ' +
+                        'class="shrink-0 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium border transition-all cursor-pointer ' + badgeClass + '">' +
+                        '<span class="w-1.5 h-1.5 rounded-full ' + dotClass + '"></span>' +
+                        '<span>' + escapeHtml(city.name) + '</span>' +
+                    '</button>'
+                );
+            }).join('');
+        }
+
+        function renderCityMarkers() {
+            if (!mapInstance) return;
+            cityMarkers.forEach(function (m) { m.remove(); });
+            cityMarkers = [];
+
+            window.WORLD_CITIES.forEach(function (city) {
+                const hasChat = Boolean(city.chatId);
+                const isSelected = city.id === activeCityId;
+                const el = document.createElement('div');
+                el.className = 'city-marker group';
+                el.innerHTML =
+                    '<div class="relative flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold shadow-lg border backdrop-blur-md transition-all ' +
+                        (isSelected
+                            ? 'bg-emerald-950 text-white border-emerald-300 ring-4 ring-emerald-400/40 shadow-[0_0_25px_#10b981] scale-110'
+                            : hasChat
+                                ? 'bg-slate-950/90 text-emerald-300 border-emerald-400/80 shadow-emerald-500/20'
+                                : 'bg-slate-950/90 text-amber-300 border-amber-400/70 shadow-amber-500/10') + '">' +
+                        '<span class="w-2 h-2 rounded-full ' + (hasChat ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400') + '"></span>' +
+                        '<span>' + escapeHtml(city.name) + '</span>' +
+                    '</div>';
+
+                el.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    if (createPointMode) return;
+                    window.focusAndSelectCity(city.id);
+                });
+
+                const marker = new maplibregl.Marker({ element: el, anchor: 'center' })
+                    .setLngLat([city.lng, city.lat])
+                    .addTo(mapInstance);
+
+                cityMarkers.push(marker);
+            });
+        }
+
+        window.focusAndSelectCity = function (cityId, options) {
+            const opts = options || {};
+            const city = window.WORLD_CITIES.find(function (c) { return c.id === cityId; });
+            if (!city) return;
+            showFlightToast(city.name);
+            if (mapInstance) {
+                mapInstance.flyTo({
+                    center: [city.lng, city.lat],
+                    zoom: opts.cinematic ? 10 : 6.5,
+                    pitch: opts.cinematic ? 40 : 25,
+                    duration: opts.cinematic ? 2200 : 1100,
+                    essential: true
+                });
+            }
+            if (city.chatId) {
+                window.openCityChatFlow(city.id, opts);
+            } else {
+                window.sendCityRequestToAdminFlow(city.name, city.lat, city.lng, city.id, opts.skipAutoSend);
+            }
+        };
+
+        function initWorldMap(onReady) {
+            if (mapInstance) {
+                setTimeout(function () {
+                    mapInstance.resize();
+                    if (onReady) onReady();
+                }, 50);
+                return;
+            }
+            renderPopularCitiesBar();
+
+            mapInstance = new maplibregl.Map({
+                container: 'world-map-container',
+                style: getGoogleMapStyle(isHybridLayer),
+                center: [18.0, 28.0],
+                zoom: 2.0
+            });
+
+            mapInstance.addControl(new maplibregl.NavigationControl(), 'bottom-left');
+
+            mapInstance.on('load', function () {
+                renderCityMarkers();
+                if (onReady) onReady();
+            });
+
+            mapInstance.on('click', function (e) {
+                if (!createPointMode) return;
+                const lng = e.lngLat.lng;
+                const lat = e.lngLat.lat;
+                selectedCustomCoords = { lat: lat, lng: lng };
+
+                const coordsDisplay = document.getElementById('selected-point-coords-display');
+                if (coordsDisplay) {
+                    coordsDisplay.textContent = lat.toFixed(4) + ', ' + lng.toFixed(4);
+                }
+                const errEl = document.getElementById('create-point-error');
+                if (errEl) errEl.classList.add('hidden');
+
+                if (customTempMarker) {
+                    customTempMarker.setLngLat([lng, lat]);
+                } else {
+                    const pinEl = document.createElement('div');
+                    pinEl.className = 'w-7 h-7 rounded-full bg-cyan-500 border-2 border-white shadow-[0_0_20px_#06b6d4] flex items-center justify-center text-slate-950 font-bold text-xs';
+                    pinEl.innerHTML = '📍';
+                    customTempMarker = new maplibregl.Marker({ element: pinEl, draggable: true })
+                        .setLngLat([lng, lat])
+                        .addTo(mapInstance);
+
+                    customTempMarker.on('dragend', function () {
+                        const pos = customTempMarker.getLngLat();
+                        selectedCustomCoords = { lat: pos.lat, lng: pos.lng };
+                        if (coordsDisplay) {
+                            coordsDisplay.textContent = pos.lat.toFixed(4) + ', ' + pos.lng.toFixed(4);
+                        }
+                    });
+                }
+            });
+        }
+
+        window.openWorldMapModal = function (onReady) {
+            const modal = document.getElementById('world-map-modal');
+            if (!modal) return;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            initWorldMap(onReady);
+            setTimeout(function () {
+                if (mapInstance) mapInstance.resize();
+            }, 100);
+        };
+
+        window.toggleGoogleMapLayer = function () {
+            if (!mapInstance) return;
+            isHybridLayer = !isHybridLayer;
+            mapInstance.setStyle(getGoogleMapStyle(isHybridLayer));
+        };
+
+        window.toggleCreatePointMode = function (forceState) {
+            createPointMode = typeof forceState === 'boolean' ? forceState : !createPointMode;
+            const panel = document.getElementById('create-point-panel');
+            const canvasContainer = mapInstance && mapInstance.getCanvasContainer();
+
+            if (createPointMode) {
+                if (panel) panel.classList.remove('hidden');
+                if (canvasContainer) canvasContainer.style.cursor = 'crosshair';
+                const input = document.getElementById('custom-point-name-input');
+                if (input) setTimeout(function () { input.focus(); }, 80);
+            } else {
+                if (panel) panel.classList.add('hidden');
+                if (canvasContainer) canvasContainer.style.cursor = '';
+                if (customTempMarker) {
+                    customTempMarker.remove();
+                    customTempMarker = null;
+                }
+                selectedCustomCoords = null;
+                const coordsDisplay = document.getElementById('selected-point-coords-display');
+                if (coordsDisplay) {
+                    coordsDisplay.textContent = 'Click on the map to select a point...';
+                }
+                const errEl = document.getElementById('create-point-error');
+                if (errEl) errEl.classList.add('hidden');
+            }
+        };
+
+        window.submitCustomPointToAdmin = function () {
+            const nameInput = document.getElementById('custom-point-name-input');
+            const errEl = document.getElementById('create-point-error');
+            const pointName = nameInput ? nameInput.value.trim() : '';
+
+            if (!selectedCustomCoords) {
+                if (errEl) {
+                    errEl.textContent = 'Please click on the map to select a point location.';
+                    errEl.classList.remove('hidden');
+                }
+                return;
+            }
+            if (!pointName) {
+                if (errEl) {
+                    errEl.textContent = 'Please enter a point or city name.';
+                    errEl.classList.remove('hidden');
+                }
+                if (nameInput) nameInput.focus();
+                return;
+            }
+
+            const lat = selectedCustomCoords.lat;
+            const lng = selectedCustomCoords.lng;
+
+            // Add the new point to the map and trigger the admin send flow
+            const slug = pointName.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '') || ('point_' + Date.now());
+            const newId = slug + '_' + Math.floor(Date.now() / 1000);
+            window.WORLD_CITIES.push({
+                id: newId,
+                name: pointName,
+                lat: lat,
+                lng: lng,
+                chatId: null,
+                telegramUrl: null
+            });
+
+            if (nameInput) nameInput.value = '';
+            window.toggleCreatePointMode(false);
+            window.sendCityRequestToAdminFlow(pointName, lat, lng, newId, false);
+        };
+
+        // Deep-link entry handler: ?point=dubai or ?point=custom&name=MySpot&lat=25.2&lng=55.2&chat=336925909_myspot
+        function checkInitialDeepLink() {
+            const params = new URLSearchParams(window.location.search);
+            const pointId = params.get('point') || params.get('city');
+            const chatParam = params.get('chat');
+            const nameParam = params.get('name');
+            const latParam = parseFloat(params.get('lat'));
+            const lngParam = parseFloat(params.get('lng'));
+            const tgParam = params.get('tg');
+
+            if (!pointId && !chatParam) return;
+
+            let targetCity = window.WORLD_CITIES.find(function (c) {
+                return c.id === pointId || (chatParam && c.chatId === chatParam);
+            });
+
+            // If point was created dynamically by admin in Telegram bot and shared via URL params
+            if (!targetCity && !isNaN(latParam) && !isNaN(lngParam)) {
+                const dynamicId = pointId || ('point_' + Date.now());
+                targetCity = {
+                    id: dynamicId,
+                    name: nameParam || dynamicId,
+                    lat: latParam,
+                    lng: lngParam,
+                    chatId: chatParam || ('336925909_' + dynamicId),
+                    telegramUrl: tgParam || ('https://t.me/InstantChatBot?start=sub_' + encodeURIComponent(dynamicId))
+                };
+                window.WORLD_CITIES.push(targetCity);
+            } else if (targetCity && chatParam && !targetCity.chatId) {
+                targetCity.chatId = chatParam;
+                targetCity.telegramUrl = tgParam || ('https://t.me/InstantChatBot?start=sub_' + encodeURIComponent(targetCity.id));
+            }
+
+            if (targetCity) {
+                window.openWorldMapModal(function () {
+                    setTimeout(function () {
+                        window.focusAndSelectCity(targetCity.id, { cinematic: true, skipAutoSend: true });
+                    }, 250);
+                });
+            }
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', checkInitialDeepLink);
+        } else {
+            checkInitialDeepLink();
+        }
+    })();
 </script>
 <script src="https://cafechat.app/start.js" async></script>
 <script>
